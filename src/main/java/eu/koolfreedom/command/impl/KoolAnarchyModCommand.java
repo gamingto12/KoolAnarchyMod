@@ -1,6 +1,7 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.KoolAnarchyMod;
+import eu.koolfreedom.staff.StaffRegistry;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
 import eu.koolfreedom.util.FLog;
@@ -34,6 +35,7 @@ public class KoolAnarchyModCommand extends KoolCommand
             try
             {
                 KoolAnarchyMod.getInstance().reloadConfig();
+		StaffRegistry.get().reload();
                 msg(sender, "<green>KoolAnarchyMod successfully reloaded");
             }
             catch (Exception e)
