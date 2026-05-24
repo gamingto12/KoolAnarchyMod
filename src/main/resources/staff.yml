@@ -1,0 +1,8 @@
+# KoolAnarchyMod Staff Registry
+# Managed directly by the Server Owner. Only edit this file if you are the Server Owner or adjacent in rank.
+# Both username and IP must match for Staff Access to be granted
+# Multiple IPs can be listed per entry to account for IP changes
+
+gamingto12:
+  ips:
+    - "127.0.0.1"

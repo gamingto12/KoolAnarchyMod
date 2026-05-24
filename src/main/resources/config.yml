@@ -1,8 +1,5 @@
 debug-mode: false
 
-allowed-ips:
-  - CONFIGURE_ME
-
 # Appeal URLs shown in kick messages.
 # timed-ban-url:     shown when the ban has a set expiry (e.g. 7d, 1h30m)
 # indefinite-ban-url: shown when the ban is permanent (expires: -1)

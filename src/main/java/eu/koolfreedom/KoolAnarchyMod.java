@@ -4,6 +4,7 @@ import eu.koolfreedom.ban.IndefiniteBanSystem;
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.command.impl.*;
 import eu.koolfreedom.listener.PlayerListener;
+import eu.koolfreedom.staff.StaffRegistry;
 import eu.koolfreedom.util.FLog;
 import lombok.Getter;
 import org.bukkit.Particle;
@@ -42,6 +43,8 @@ public class KoolAnarchyMod extends JavaPlugin
         banSystem = IndefiniteBanSystem.get();
         banSystem.reload();
 
+        StaffRegistry.get().reload();
+
         // Periodically prune expired timed bans from bans.yml
         getServer().getScheduler().runTaskTimerAsynchronously(
                 this,
@@ -73,13 +76,7 @@ public class KoolAnarchyMod extends JavaPlugin
      */
     public static boolean isAllowed(CommandSender sender)
     {
-        if (!(sender instanceof Player player)) return true;
-
-        if (player.getAddress() == null) return false;
-
-        String ip = player.getAddress().getAddress().getHostAddress();
-        List<String> allowedIps = KoolAnarchyMod.getInstance().getConfig().getStringList("allowed-ips");
-        return allowedIps.stream().anyMatch(allowedIp -> allowedIp.equalsIgnoreCase(ip));
+        return StaffRegistry.get().isStaff(sender);
     }
 
     public static void crashPlayer(Player victim)
