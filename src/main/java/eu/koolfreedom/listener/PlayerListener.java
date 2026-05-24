@@ -2,6 +2,7 @@ package eu.koolfreedom.listener;
 
 import eu.koolfreedom.KoolAnarchyMod;
 import eu.koolfreedom.ban.IndefiniteBanSystem;
+import eu.koolfreedom.staff.StaffRegistry;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -9,6 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.net.InetAddress;
@@ -27,6 +29,15 @@ public class PlayerListener implements Listener
     {
         KoolAnarchyMod.getInstance().getServer().getPluginManager()
                 .registerEvents(this, KoolAnarchyMod.getInstance());
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onStaffLogin(PlayerJoinEvent event)
+    {
+        StaffRegistry registry = StaffRegistry.get();
+
+        registry.getLoginMessage(event.getPlayer()).ifPresent(message ->
+                event.getPlayer().getServer().broadcast(message));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

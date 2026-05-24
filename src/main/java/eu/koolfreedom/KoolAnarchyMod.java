@@ -7,6 +7,8 @@ import eu.koolfreedom.listener.PlayerListener;
 import eu.koolfreedom.staff.StaffRegistry;
 import eu.koolfreedom.util.FLog;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,6 +25,12 @@ public class KoolAnarchyMod extends JavaPlugin
     public IndefiniteBanSystem banSystem;
     private CommandLoader commandLoader;
     public PlayerListener playerListener;
+    private final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+
+    public Component mmDeserialize(String message)
+    {
+        return MINI_MESSAGE.deserialize(message).clickEvent(null).hoverEvent(null);
+    }
 
     /** How often to prune expired bans, in ticks. 6000 = every 5 minutes. */
     private static final long PRUNE_INTERVAL_TICKS = 6000L;

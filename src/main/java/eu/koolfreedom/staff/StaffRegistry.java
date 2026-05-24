@@ -2,12 +2,17 @@ package eu.koolfreedom.staff;
 
 import eu.koolfreedom.KoolAnarchyMod;
 import eu.koolfreedom.util.FLog;
+import eu.koolfreedom.util.FUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 public class StaffRegistry
 {
@@ -68,4 +73,37 @@ public class StaffRegistry
         return allowedIps.stream().anyMatch(stored -> stored.equalsIgnoreCase(ip));
     }
 
+    /**
+     * Returns the StaffRole for a given username, or empty if not in the registry.
+     */
+    public Optional<StaffRole> getRole(String username)
+    {
+        if (username == null) return Optional.empty();
+        String key = username.toLowerCase();
+        if (!config.contains(key)) return Optional.empty();
+        String roleStr = config.getString(key + ".role", "STAFF");
+        return Optional.of(StaffRole.fromString(roleStr));
+    }
+
+    /**
+     * Builds a server-wide login message for a staff member.
+     * Returns empty if the player is not in the registry.
+     */
+    public Optional<Component> getLoginMessage(Player player)
+    {
+        Optional<StaffRole> role = getRole(player.getName());
+        if (role.isEmpty()) return Optional.empty();
+
+        String prepend = MiniMessage.miniMessage().serialize(KoolAnarchyMod.getInstance().mmDeserialize(
+                "<aqua>" + player.getName() + " is "));
+
+        String suffix = switch (role.get())
+        {
+            case OWNER -> "the <dark_red>Owner";
+            case CO_OWNER -> "the <red>Co-Owner";
+            case STAFF -> "a <gold>Staff Member";
+        };
+
+        return Optional.of(KoolAnarchyMod.getInstance().mmDeserialize(prepend + suffix));
+    }
 }
