@@ -96,7 +96,8 @@ public class GTFOCommand extends KoolCommand
                             p.getWorld().strikeLightning(p.getLocation());
 
                         p.setHealth(0);
-                        p.kick(Component.text("You have been banned.", NamedTextColor.RED));
+                        Bukkit.getScheduler().runTask(KoolAnarchyMod.getInstance(), () ->
+                                p.kick(Component.text("You have been banned.", NamedTextColor.RED)));
                     });
         }
 
