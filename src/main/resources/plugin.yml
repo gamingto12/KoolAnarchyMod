@@ -4,3 +4,20 @@ main: eu.koolfreedom.KoolAnarchyMod
 api-version: 1.21
 author: gamingto12
 description: A plugin for the KoolAnarchy Minecraft server.
+
+permissions:
+  kfc.admin:
+    description: Grants access to all KoolAnarchyMod admin commands.
+    default: false
+
+  kfc.permbans.ban:
+    description: Allows banning players via /permbans ban.
+    default: false
+    children:
+      kfc.admin: false
+
+  kfc.permbans.remove:
+    description: Allows removing bans via /permbans remove.
+    default: false
+    children:
+      kfc.admin: false

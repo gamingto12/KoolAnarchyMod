@@ -1,5 +1,6 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.ban.IndefiniteBanSystem;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
 import eu.koolfreedom.util.FUtil;
@@ -17,7 +18,11 @@ import eu.koolfreedom.KoolAnarchyMod;
 import java.util.Arrays;
 import java.util.List;
 
-@CommandParameters(name = "gtfo", description = "Bans the specified player.", usage = "/<command> <username> [reason] [-nrb | -q]")
+@CommandParameters(
+        name = "gtfo",
+        description = "Bans the specified player.",
+        usage = "/<command> <username> [duration] [reason]"
+)
 public class GTFOCommand extends KoolCommand
 {
     @Override
@@ -25,14 +30,11 @@ public class GTFOCommand extends KoolCommand
     {
         if (!KoolAnarchyMod.isAllowed(sender))
         {
-            msg(sender, "<red>You do not have access to execute this command");
+            msg(sender, "<red>You do not have access to execute this command.");
             return true;
         }
 
-        if (args.length == 0)
-        {
-            return false;
-        }
+        if (args.length == 0) return false;
 
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
         if (!target.isOnline() && !target.hasPlayedBefore())
@@ -41,42 +43,81 @@ public class GTFOCommand extends KoolCommand
             return true;
         }
 
-        String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
-        plugin.getBanSystem().banOfflinePlayer(target, "You've met with a terrible fate, haven't you? " + reason);
+        // Determine if args[1] is a duration string (e.g. 7d, 1h30m)
+        // If it parses cleanly, treat it as duration and shift reason start forward.
+        // Otherwise, everything after the name is the reason and the ban is permanent.
+        String duration = null;
+        int reasonStart = 1;
 
-        FUtil.staffAction(sender, "Banning <target>", Placeholder.unparsed("target", target.getName() != null ? target.getName() : args[0]));
-        if (target instanceof Player online)
+        if (args.length >= 2 && IndefiniteBanSystem.parseDuration(args[1]) > 0)
         {
-            // Now for the fun part...
-            for (int i = 0; i < 4; i++)
-            {
-                online.getWorld().strikeLightning(online.getLocation());
-            }
-            online.setHealth(0);
+            duration = args[1];
+            reasonStart = 2;
+        }
 
-            // We had our fun, they're gone
+        // Build the reason — wraps in parentheses to match the original style
+        String reason = args.length > reasonStart
+                ? " (" + String.join(" ", Arrays.copyOfRange(args, reasonStart, args.length)) + ")"
+                : "";
+
+        String fullReason = IndefiniteBanSystem.DEFAULT_REASON + reason;
+
+        // Ban — online players go through banPlayer for IP capture, offline through banOfflinePlayer
+        if (target.isOnline() && target.getPlayer() != null)
+            plugin.getBanSystem().banPlayer(target.getPlayer(), fullReason, duration);
+        else
+            plugin.getBanSystem().banOfflinePlayer(target, fullReason, duration);
+
+        // Staff broadcast
+        String durationDisplay = duration != null ? duration : "permanent";
+        FUtil.staffAction(sender, "Banning <target> (<duration>)",
+                Placeholder.unparsed("target", target.getName() != null ? target.getName() : args[0]),
+                Placeholder.unparsed("duration", durationDisplay)
+        );
+
+        // The fun part — only runs if the player is currently online
+        if (target.isOnline() && target.getPlayer() != null)
+        {
+            Player online = target.getPlayer();
+
+            for (int i = 0; i < 4; i++)
+                online.getWorld().strikeLightning(online.getLocation());
+
+            online.setHealth(0);
             online.spawnParticle(Particle.ASH, online.getLocation(), Integer.MAX_VALUE, 1, 1, 1, 1, null, true);
 
-            // Just for good measure...
-            Bukkit.getOnlinePlayers().stream().filter(player -> FUtil.getIp(player).equalsIgnoreCase(FUtil.getIp(online))).forEach(player ->
-            {
-                // ZAP, and they're gone
-                for (int i = 0; i < 4; i++)
-                {
-                    player.getWorld().strikeLightning(player.getLocation());
-                }
-                player.setHealth(0);
-                player.kick(Component.text("You have been banned", NamedTextColor.RED));
-            });
+            // Catch any alt accounts on the same IP
+            String bannedIp = FUtil.getIp(online);
+            Bukkit.getOnlinePlayers().stream()
+                    .filter(p -> !p.equals(online))
+                    .filter(p -> FUtil.getIp(p).equalsIgnoreCase(bannedIp))
+                    .forEach(p -> {
+                        for (int i = 0; i < 4; i++)
+                            p.getWorld().strikeLightning(p.getLocation());
+
+                        p.setHealth(0);
+                        p.kick(Component.text("You have been banned.", NamedTextColor.RED));
+                    });
         }
+
         return true;
     }
 
     @Override
     public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
     {
-        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName)
-                .filter(name -> !name.equalsIgnoreCase(sender.getName())).toList() : List.of();
+        if (args.length == 1)
+        {
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(name -> !name.equalsIgnoreCase(sender.getName()))
+                    .toList();
+        }
+
+        // Suggest common durations at position 2 if args[1] looks like it could be a duration
+        if (args.length == 2)
+            return Arrays.asList("1h", "1d", "7d", "30d", "1h30m");
+
+        return List.of();
     }
 }
-

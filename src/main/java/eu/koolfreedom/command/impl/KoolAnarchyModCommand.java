@@ -35,7 +35,6 @@ public class KoolAnarchyModCommand extends KoolCommand
             {
                 KoolAnarchyMod.getInstance().reloadConfig();
                 msg(sender, "<green>KoolAnarchyMod successfully reloaded");
-                FLog.debug("Could not reload plugin, something went wrong. Check the stack trace for more details.");
             }
             catch (Exception e)
             {

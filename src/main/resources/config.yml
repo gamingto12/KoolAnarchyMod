@@ -3,4 +3,8 @@ debug-mode: false
 allowed-ips:
   - CONFIGURE_ME
 
-ban-url: "https://discord.gg/MTYrSgVkmd"
+# Appeal URLs shown in kick messages.
+# timed-ban-url:     shown when the ban has a set expiry (e.g. 7d, 1h30m)
+# indefinite-ban-url: shown when the ban is permanent (expires: -1)
+timed-ban-url: "CONFIGURE_ME"
+indefinite-ban-url: "CONFIGURE_ME"

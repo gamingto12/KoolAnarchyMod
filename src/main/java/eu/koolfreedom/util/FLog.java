@@ -2,88 +2,89 @@ package eu.koolfreedom.util;
 
 import eu.koolfreedom.KoolAnarchyMod;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.slf4j.Logger;
 
 public class FLog
 {
-    private static final Logger logger = KoolAnarchyMod.getInstance().getSLF4JLogger();
-    private static final ComponentLogger componentLogger = KoolAnarchyMod.getInstance().getComponentLogger();
+    private static final ComponentLogger logger = ComponentLogger.logger("");
+    private static boolean debugEnabled;
 
-    // Logging level: INFO
-    public static void info(String message)
+    public static void info(String message, Object... strings)
     {
-        logger.info(message);
-    }
-
-    public static void info(String message, Object... args)
-    {
-        logger.info(message, args);
-    }
-
-    public static void info(Component message)
-    {
-        componentLogger.info(message);
-    }
-
-    // Logging level: WARNING
-    public static void warning(String message)
-    {
-        logger.warn(message);
-    }
-
-    public static void warning(String message, Object... args)
-    {
-        logger.warn(message, args);
-    }
-
-    public static void warning(Component message)
-    {
-        componentLogger.warn(message);
-    }
-
-    public static void warning(String message, Throwable ex)
-    {
-        logger.warn(message, ex);
-    }
-
-    public static void warning(Component message, Throwable ex)
-    {
-        componentLogger.warn(message, ex);
-    }
-
-    // Logging level: ERROR
-    public static void error(String message)
-    {
-        logger.error(message);
-    }
-
-    public static void error(String message, Object... args)
-    {
-        logger.error(message, args);
-    }
-
-    public static void error(Component message)
-    {
-        componentLogger.error(message);
-    }
-
-    public static void error(String message, Throwable ex)
-    {
-        logger.error(message, ex);
-    }
-
-    public static void error(Component message, Throwable ex)
-    {
-        componentLogger.error(message, ex);
-    }
-
-    // Debug logging
-    public static void debug(String message, Object... args)
-    {
-        if (KoolAnarchyMod.getInstance().getConfig().getBoolean("debug-mode"))
+        for (int i = 0; i < strings.length; i++)
         {
-            logger.debug(message, args);
+            if (strings[i] == null)
+            {
+                continue;
+            }
+            if (message.contains("{" + i + "}"))
+            {
+                message = message.replace("{" + i + "}", strings[i].toString());
+            }
+        }
+        logger.info(FUtil.miniMessage("<yellow>[KoolAnarchyMod] <gray>" + message));
+    }
+
+    public static void info(Component component)
+    {
+        logger.info(Component.text("[KoolAnarchyMod] ").color(NamedTextColor.YELLOW).append(component).colorIfAbsent(NamedTextColor.GRAY));
+    }
+
+    public static void error(String message, Object... strings)
+    {
+        for (int i = 0; i < strings.length; i++)
+        {
+            if (strings[i] == null)
+            {
+                continue;
+            }
+            if (message.contains("{" + i + "}"))
+            {
+                message = message.replace("{" + i + "}", strings[i].toString());
+            }
+        }
+        logger.error(FUtil.miniMessage("<red>[KoolAnarchyError] <gold>" + message));
+    }
+
+    public static void warning(String message, Object... strings)
+    {
+        for (int i = 0; i < strings.length; i++)
+        {
+            if (strings[i] == null)
+            {
+                continue;
+            }
+            if (message.contains("{" + i + "}"))
+            {
+                message = message.replace("{" + i + "}", strings[i].toString());
+            }
+        }
+        logger.warn(FUtil.miniMessage("<#eb7c0e>[KoolAnarchyWarning] <gold>" + message));
+    }
+
+    public static void setDebugEnabled(boolean debugEnabled)
+    {
+        FLog.debugEnabled = debugEnabled;
+    }
+
+    public static void debug(String message, Object... strings)
+    {
+        if (debugEnabled)
+        {
+            for (int i = 0; i < strings.length; i++)
+            {
+                if (strings[i] == null)
+                {
+                    continue;
+                }
+                if (message.contains("{" + i + "}"))
+                {
+                    message = message.replace("{" + i + "}", strings[i].toString());
+                }
+            }
+            logger.info(FUtil.miniMessage("<dark_purple>[KoolAnarchyDebug] <gold>" + message));
         }
     }
 }

@@ -1,15 +1,32 @@
-# KoolAnarchy Indefinite Bans File
+# KoolAnarchy Bans File
 #
 # This serves as the only method of banning people via KoolAnarchy.
-# Reasons support both MiniMessage and legacy chat formats, to learn more about MiniMessage, see https://webui.advntr.dev/
+# Reasons support both MiniMessage and legacy chat formats.
+# To learn more about MiniMessage, see https://webui.advntr.dev/
+#
+# Duration / expiry:
+#   expires: -1        -> permanent ban (default)
+#   expires: <epoch>   -> Unix timestamp in milliseconds; auto-removed on expiry
+#
+# You should not edit 'expires' by hand. Use the /permbans ban command instead:
+#   /permbans ban <player>                     -> permanent, default reason
+#   /permbans ban <player> 7d                  -> 7 days, default reason
+#   /permbans ban <player> 1h30m Being annoying -> 1h 30m, custom reason
+#
+# Supported duration units: d (days), h (hours), m (minutes), s (seconds)
+# These can be combined: 1d12h, 30m, 7d, 2h30m45s, etc.
+
 badplayer1:
   uuid: "123e4567-e89b-12d3-a456-426614174000"
   ips:
     - "123.123.123.123"
     - "321.321.321.321"
   reason: "<red>Bad player"
+  expires: -1
+
 anotherplayer:
   uuid: "abcdef12-3456-7890-abcd-ef1234567890"
   ips:
     - "10.0.0.50"
   reason: "&cHate Speech"
+  expires: -1

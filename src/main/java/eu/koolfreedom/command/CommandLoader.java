@@ -34,7 +34,7 @@ public class CommandLoader
             }
             catch (Throwable ex)
             {
-                FLog.error("Failed to load command {}", commandClass.getName(), ex);
+                FLog.error("Failed to load command {0}", commandClass.getName(), ex);
             }
         });
     }
