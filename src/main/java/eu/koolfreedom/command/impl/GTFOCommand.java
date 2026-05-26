@@ -14,6 +14,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import eu.koolfreedom.KoolAnarchyMod;
+import org.bukkit.event.player.PlayerKickEvent;
 
 import java.util.Arrays;
 import java.util.List;
@@ -97,7 +98,8 @@ public class GTFOCommand extends KoolCommand
 
                         p.setHealth(0);
                         Bukkit.getScheduler().runTask(KoolAnarchyMod.getInstance(), () ->
-                                p.kick(Component.text("You have been banned.", NamedTextColor.RED)));
+                                p.kick(Component.text("You have been banned.", NamedTextColor.RED),
+                                        PlayerKickEvent.Cause.ILLEGAL_ACTION));
                     });
         }
 
