@@ -99,9 +99,9 @@ public class StaffRegistry
 
         String suffix = switch (role.get())
         {
-            case OWNER -> "the <dark_red>Owner";
-            case CO_OWNER -> "the <red>Co-Owner";
-            case STAFF -> "a <gold>Staff Member";
+            case OWNER -> "the <dark_red><i>Owner";
+            case CO_OWNER -> "the <red><i>Co-Owner";
+            case STAFF -> "a <gold><i>Staff Member";
         };
 
         return Optional.of(KoolAnarchyMod.getInstance().mmDeserialize(prepend + suffix));

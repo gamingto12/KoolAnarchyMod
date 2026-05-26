@@ -50,7 +50,7 @@ public class PermBanCommand extends KoolCommand
             //   /permbans ban Notch 1h30m Being annoying -> 1h30m, custom reason
             //   /permbans ban Notch Being annoying       -> permanent, reason = "Being annoying"
             case "ban" -> {
-                if (!sender.hasPermission("kfc.permbans.ban"))
+                if (!KoolAnarchyMod.isAllowed(sender))
                 {
                     msg(sender, "<red>You don't have permission to ban players.");
                     return true;
@@ -102,7 +102,7 @@ public class PermBanCommand extends KoolCommand
             }
 
             case "remove" -> {
-                if (!sender.hasPermission("kfc.permbans.remove"))
+                if (!KoolAnarchyMod.isAllowed(sender))
                 {
                     msg(sender, "<red>You don't have permission to remove bans.");
                     return true;
@@ -159,7 +159,7 @@ public class PermBanCommand extends KoolCommand
     @Override
     public List<String> tabComplete(CommandSender sender, Command command, String s, String[] args)
     {
-        if (!sender.hasPermission("kfc.admin")) return null;
+        if (!KoolAnarchyMod.isAllowed(sender)) return null;
 
         if (args.length == 1)
             return Arrays.asList("reload", "ban", "remove");
@@ -169,7 +169,7 @@ public class PermBanCommand extends KoolCommand
             return switch (args[0].toLowerCase())
             {
                 case "ban"    -> Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-                case "remove" -> sender.hasPermission("kfc.permbans.remove")
+                case "remove" -> KoolAnarchyMod.isAllowed(sender)
                         ? Arrays.asList("name", "uuid", "ip") : null;
                 default -> null;
             };
@@ -180,7 +180,7 @@ public class PermBanCommand extends KoolCommand
 
         if (args.length == 3 && args[0].equalsIgnoreCase("remove"))
         {
-            if (!sender.hasPermission("kfc.permbans.remove")) return null;
+            if (!KoolAnarchyMod.isAllowed(sender)) return null;
             if (args[1].equalsIgnoreCase("name"))
                 return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
         }
