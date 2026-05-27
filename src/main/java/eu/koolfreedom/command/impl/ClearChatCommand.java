@@ -1,5 +1,6 @@
 package eu.koolfreedom.command.impl;
 
+import eu.koolfreedom.KoolAnarchyMod;
 import eu.koolfreedom.command.annotation.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.util.FUtil;
@@ -16,6 +17,11 @@ public class ClearChatCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
     {
+        if (!KoolAnarchyMod.isAllowed(sender))
+        {
+            return false;
+        }
+
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
         {
             // Messages are not unique between players with this implementation, mainly for better optimization, but it
