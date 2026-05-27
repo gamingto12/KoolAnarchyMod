@@ -3,6 +3,7 @@ package eu.koolfreedom.listener;
 import eu.koolfreedom.KoolAnarchyMod;
 import eu.koolfreedom.ban.IndefiniteBanSystem;
 import eu.koolfreedom.staff.StaffRegistry;
+import eu.koolfreedom.util.FLog;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -44,6 +45,12 @@ public class PlayerListener implements Listener
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBanKick(PlayerKickEvent event)
     {
+        FLog.debug("PlayerKickEvent fired for {0} | cause: {1} | cancelled: {2} | has metadata: {3}",
+                event.getPlayer().getName(),
+                event.getCause(),
+                event.isCancelled(),
+                event.getPlayer().hasMetadata("kfc.banned"));
+
         if (event.getPlayer().hasMetadata("kfc.banned"))
         {
             event.setCancelled(false);
