@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import eu.koolfreedom.KoolAnarchyMod;
 import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
 public class GTFOCommand extends KoolCommand
 {
     @Override
+    @SuppressWarnings("deprecation")
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String s, String[] args)
     {
         if (!KoolAnarchyMod.isAllowed(sender))
@@ -97,9 +99,11 @@ public class GTFOCommand extends KoolCommand
                             p.getWorld().strikeLightning(p.getLocation());
 
                         p.setHealth(0);
+                        p.setMetadata("kfc.banned",
+                                new FixedMetadataValue(KoolAnarchyMod.getInstance(), true));
+
                         Bukkit.getScheduler().runTask(KoolAnarchyMod.getInstance(), () ->
-                                p.kick(Component.text("You have been banned.", NamedTextColor.RED),
-                                        PlayerKickEvent.Cause.ILLEGAL_ACTION));
+                                p.kick(Component.text("You have been banned.", NamedTextColor.RED)));
                     });
         }
 

@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.net.InetAddress;
@@ -38,6 +39,16 @@ public class PlayerListener implements Listener
 
         registry.getLoginMessage(event.getPlayer()).ifPresent(message ->
                 event.getPlayer().getServer().broadcast(message));
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBanKick(PlayerKickEvent event)
+    {
+        if (event.getPlayer().hasMetadata("kfc.banned"))
+        {
+            event.setCancelled(false);
+            event.getPlayer().removeMetadata("kfc.banned", KoolAnarchyMod.getInstance());
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
