@@ -103,7 +103,7 @@ public class GTFOCommand extends KoolCommand
 
                         // Set metadata synchronously BEFORE scheduling the kick
                         p.setMetadata("kfc.banned",
-                                new org.bukkit.metadata.FixedMetadataValue(KoolAnarchyMod.getInstance(), true));
+                                new FixedMetadataValue(KoolAnarchyMod.getInstance(), true));
 
                         Bukkit.getScheduler().runTask(KoolAnarchyMod.getInstance(), () ->
                                 FLog.debug("Attempting kick on {0} | has metadata: {1}",
