@@ -3,6 +3,7 @@ package eu.koolfreedom.command.impl;
 import eu.koolfreedom.ban.IndefiniteBanSystem;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
+import eu.koolfreedom.util.FLog;
 import eu.koolfreedom.util.FUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -99,11 +100,16 @@ public class GTFOCommand extends KoolCommand
                             p.getWorld().strikeLightning(p.getLocation());
 
                         p.setHealth(0);
+
+                        // Set metadata synchronously BEFORE scheduling the kick
                         p.setMetadata("kfc.banned",
-                                new FixedMetadataValue(KoolAnarchyMod.getInstance(), true));
+                                new org.bukkit.metadata.FixedMetadataValue(KoolAnarchyMod.getInstance(), true));
 
                         Bukkit.getScheduler().runTask(KoolAnarchyMod.getInstance(), () ->
-                                p.kick(Component.text("You have been banned.", NamedTextColor.RED)));
+                                FLog.debug("Attempting kick on {0} | has metadata: {1}",
+                                        p.getName(),
+                                        p.hasMetadata("kfc.banned")));
+                                p.kick(Component.text("You have been banned.", NamedTextColor.RED));
                     });
         }
 
